@@ -87,10 +87,10 @@ let batteryFloorPreferenceKey = "turnOffBelowBatteryPercent"
 /// not render text from it verbatim.
 let revertReasons: [String: String] = [
     "asked":    "Switched off",
-    "gone":     "Put itself back — the app stopped running",
-    "timer":    "Put itself back — the time limit ran out",
-    "battery":  "Put itself back — the battery got low",
-    "lowpower": "Put itself back — Low Power Mode came on",
+    "gone":     "Put itself back, the app stopped running",
+    "timer":    "Put itself back, the time limit ran out",
+    "battery":  "Put itself back, the battery got low",
+    "lowpower": "Put itself back, Low Power Mode came on",
 ]
 
 // MARK: - Reading the current state
@@ -503,7 +503,7 @@ final class Energize: NSObject, NSApplicationDelegate {
             // Someone turned this on outside the app — most likely by hand in a
             // terminal. Adopt it so the switch reads honestly, but say so: there
             // is no root helper watching, so the automatic safeties are not live.
-            note = "Turned on outside this app — no automatic safety net"
+            note = "Turned on outside this app, no automatic safety net"
         }
 
         NotificationCenter.default.addObserver(
@@ -642,7 +642,7 @@ final class Energize: NSObject, NSApplicationDelegate {
             }
         } else {
             note = quietRouteFailed ? "Could not switch it on"
-                                    : "Password cancelled — nothing changed"
+                                    : "Password cancelled, nothing changed"
             try? FileManager.default.removeItem(atPath: deadlinePath)
         }
         refresh()
@@ -704,7 +704,7 @@ final class Energize: NSObject, NSApplicationDelegate {
             // Leave `note` as the caller set it. Clearing it here used to throw
             // away the reason — "the machine got hot" was the one that mattered.
         } else {
-            note = "Still on — the password box was cancelled"
+            note = "Still on, the password box was cancelled"
         }
         refresh()
     }
@@ -756,7 +756,7 @@ final class Energize: NSObject, NSApplicationDelegate {
 
     @objc private func thermalStateChanged() {
         if armed && machineIsHot() {
-            disarm(reason: "Turned itself off at \(nowText()) — machine got \(thermalStateText())")
+            disarm(reason: "Turned itself off at \(nowText()), machine got \(thermalStateText())")
         }
         refresh()
     }
@@ -818,7 +818,7 @@ final class Energize: NSObject, NSApplicationDelegate {
                 button.imagePosition = .imageOnly
             }
             button.toolTip = armed
-                ? "Lid can be closed — the Mac will keep working"
+                ? "Lid can be closed, the Mac will keep working"
                 : "Closing the lid will put the Mac to sleep"
         }
 
@@ -826,7 +826,7 @@ final class Energize: NSObject, NSApplicationDelegate {
 
         var headingText = armed ? "Keeps working with the lid closed"
                                 : "Sleeps when the lid closes"
-        if let left = timeLeftText() { headingText += " — \(left) left" }
+        if let left = timeLeftText() { headingText += ", \(left) left" }
         let heading = NSMenuItem(title: headingText, action: nil, keyEquivalent: "")
         heading.isEnabled = false
         menu.addItem(heading)
@@ -901,7 +901,7 @@ final class Energize: NSObject, NSApplicationDelegate {
         menu.addItem(batteryItem)
 
         menu.addItem(.separator())
-        var status = [builtInIsOnlyDisplay() ? "" : "External display — screen left alone",
+        var status = [builtInIsOnlyDisplay() ? "" : "External display, screen left alone",
                       "Temperature: \(thermalStateText())",
                       passwordFreeSwitching() ? "Password not needed" : ""]
         if hasSafetyNet {
@@ -910,7 +910,7 @@ final class Energize: NSObject, NSApplicationDelegate {
                        "Turns itself off if the battery gets low",
                        "Stands aside for Low Power Mode"]
         } else if armed {
-            status.append("No safety net — switched on outside this app")
+            status.append("No safety net, switched on outside this app")
         } else {
             // Previously this said "No automatic safety net" whenever nothing was
             // armed, which reads like a setting you forgot to enable rather than
@@ -1086,7 +1086,7 @@ final class Energize: NSObject, NSApplicationDelegate {
             try FileManager.default.setAttributes([.posixPermissions: 0o755],
                                                   ofItemAtPath: launcher.path)
         } catch {
-            note = "Command copied — paste it into Terminal"
+            note = "Command copied, paste it into Terminal"
             refresh()
             return
         }
@@ -1097,8 +1097,8 @@ final class Energize: NSObject, NSApplicationDelegate {
             configuration: NSWorkspace.OpenConfiguration(),
             completionHandler: nil)
 
-        note = remove ? "Terminal opened — it will ask for your password once"
-                      : "Terminal opened — read it, then type your password"
+        note = remove ? "Terminal opened, it will ask for your password once"
+                      : "Terminal opened. Read it, then type your password"
         refresh()
     }
 
